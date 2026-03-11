@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}
+  {% if category %}{{ category }} – HomeMade Pickles{% else %}Shop All Products{% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h1>{% if category %}{{ category }}{% else %}🛍 All Products{% endif %}</h1>
+  <div class="category-filters">
+    <a href="{{ url_for('products.catalog') }}" class="filter-btn {% if not category %}active{% endif %}">All</a>
+    <a href="{{ url_for('products.by_category', category='Pickles') }}" class="filter-btn {% if category == 'Pickles' %}active{% endif %}">🫙 Pickles</a>
+    <a href="{{ url_for('products.by_category', category='Snacks') }}" class="filter-btn {% if category == 'Snacks' %}active{% endif %}">🍿 Snacks</a>
+  </div>
+</div>
+
+<div class="product-grid">
+  {% for product in products %}
+  <div class="product-card">
+    <img src="{{ product.ImageURL or url_for('static', filename='images/placeholder.jpg') }}"
+         alt="{{ product.Name }}" class="product-img"/>
+    <div class="product-info">
+      <span class="category-tag">{{ product.Category }}</span>
+      <h3>{{ product.Name }}</h3>
+      <p class="product-desc">{{ product.Description[:100] }}...</p>
+      <div class="product-meta">
+        <span class="price">₹{{ product.Price }}</span>
+        {% if product.Stock | int > 0 %}
+          <span class="badge-instock">✓ In Stock ({{ product.Stock }})</span>
+        {% else %}
+          <span class="badge-outofstock">✗ Out of Stock</span>
+        {% endif %}
+      </div>
+      <div class="card-actions">
+        <a href="{{ url_for('products.detail', product_id=product.ProductID) }}" class="btn-view">View Details</a>
+        {% if product.Stock | int > 0 and session.user_id %}
+        <form method="POST" action="{{ url_for('cart.add_to_cart', product_id=product.ProductID) }}" style="display:inline;">
+          <input type="hidden" name="quantity" value="1"/>
+          <button type="submit" class="btn-cart">🛒 Add</button>
+        </form>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+  {% else %}
+  <p class="no-products">No products found in this category.</p>
+  {% endfor %}
+</div>
+{% endblock %}

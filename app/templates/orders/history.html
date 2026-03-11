@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Order History – HomeMade Pickles{% endblock %}
+
+{% block content %}
+<h1>📦 My Orders</h1>
+
+{% if orders %}
+  {% for order in orders %}
+  <div class="order-card">
+    <div class="order-header">
+      <span><strong>Order:</strong> #{{ order.OrderID[:8].upper() }}</span>
+      <span><strong>Date:</strong> {{ order.OrderDate[:10] }}</span>
+      <span class="order-status status-{{ order.OrderStatus | lower }}">{{ order.OrderStatus }}</span>
+      <span><strong>Total:</strong> ₹{{ order.TotalAmount }}</span>
+    </div>
+    <div class="order-products">
+      {% for item in order.Products %}
+        <span class="order-item-tag">{{ item.Name }} × {{ item.Quantity }}</span>
+      {% endfor %}
+    </div>
+  </div>
+  {% endfor %}
+{% else %}
+  <div class="empty-state">
+    <p>You haven't placed any orders yet.</p>
+    <a href="{{ url_for('products.catalog') }}" class="btn-primary">Start Shopping</a>
+  </div>
+{% endif %}
+{% endblock %}

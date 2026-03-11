@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}New Subscription – HomeMade Pickles{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+  <div class="auth-card">
+    <h2>🔄 Subscribe for Regular Delivery</h2>
+    <p class="auth-sub">Choose a product and delivery frequency.</p>
+
+    <form method="POST" action="{{ url_for('subscriptions.new_subscription') }}">
+      <div class="form-group">
+        <label for="product_id">Select Product</label>
+        <select id="product_id" name="product_id" required class="form-select">
+          <option value="">-- Choose a product --</option>
+          {% for product in products %}
+            <option value="{{ product.ProductID }}"
+              {% if request.args.get('product') == product.ProductID %}selected{% endif %}>
+              {{ product.Name }} ({{ product.Category }}) – ₹{{ product.Price }}
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Delivery Frequency</label>
+        <div class="radio-group">
+          <label class="radio-label">
+            <input type="radio" name="frequency" value="weekly" required/>
+            📅 Weekly
+          </label>
+          <label class="radio-label">
+            <input type="radio" name="frequency" value="monthly" checked/>
+            📆 Monthly
+          </label>
+        </div>
+      </div>
+
+      <button type="submit" class="btn-primary full-width">Create Subscription</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

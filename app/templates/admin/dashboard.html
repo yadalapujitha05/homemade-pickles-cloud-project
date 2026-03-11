@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+{% block title %}Admin Dashboard – HomeMade Pickles{% endblock %}
+
+{% block content %}
+<div class="admin-header">
+  <h1>🛠 Admin Monitoring Dashboard</h1>
+  <p class="admin-sub">Real-time data powered by AWS DynamoDB + CloudWatch</p>
+</div>
+
+<!-- ===== STATS CARDS ===== -->
+<div class="stats-grid">
+  <div class="stat-card">
+    <span class="stat-icon">📦</span>
+    <div class="stat-value">{{ total_orders }}</div>
+    <div class="stat-label">Total Orders</div>
+  </div>
+  <div class="stat-card">
+    <span class="stat-icon">💰</span>
+    <div class="stat-value">₹{{ total_revenue }}</div>
+    <div class="stat-label">Total Revenue</div>
+  </div>
+  <div class="stat-card">
+    <span class="stat-icon">🏪</span>
+    <div class="stat-value">{{ products | length }}</div>
+    <div class="stat-label">Total Products</div>
+  </div>
+  <div class="stat-card {% if low_stock %}stat-warning{% endif %}">
+    <span class="stat-icon">⚠️</span>
+    <div class="stat-value">{{ low_stock | length }}</div>
+    <div class="stat-label">Low Stock Alerts</div>
+  </div>
+</div>
+
+<!-- ===== LOW STOCK ALERTS ===== -->
+{% if low_stock %}
+<section class="admin-section">
+  <h2>⚠️ Low Stock Alerts</h2>
+  <table class="admin-table">
+    <thead>
+      <tr><th>Product ID</th><th>Stock</th><th>Last Updated</th></tr>
+    </thead>
+    <tbody>
+      {% for item in low_stock %}
+      <tr class="{% if item.Stock | int == 0 %}row-danger{% else %}row-warning{% endif %}">
+        <td><code>{{ item.ProductID[:12] }}...</code></td>
+        <td><strong>{{ item.Stock }}</strong></td>
+        <td>{{ item.LastUpdated[:16] if item.LastUpdated else 'N/A' }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</section>
+{% endif %}
+
+<!-- ===== INVENTORY TABLE ===== -->
+<section class="admin-section">
+  <h2>📊 Current Inventory</h2>
+  <table class="admin-table">
+    <thead>
+      <tr><th>Product</th><th>Category</th><th>Price</th><th>Stock</th><th>Status</th></tr>
+    </thead>
+    <tbody>
+      {% for product in products %}
+      <tr>
+        <td>{{ product.Name }}</td>
+        <td><span class="category-tag">{{ product.Category }}</span></td>
+        <td>₹{{ product.Price }}</td>
+        <td>{{ product.Stock }}</td>
+        <td>
+          {% if product.Stock | int == 0 %}
+            <span class="badge-outofstock">Out of Stock</span>
+          {% elif product.Stock | int <= 10 %}
+            <span class="badge-lowstock">Low Stock</span>
+          {% else %}
+            <span class="badge-instock">In Stock</span>
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</section>
+
+<!-- ===== RECENT ORDERS ===== -->
+<section class="admin-section">
+  <h2>🧾 Recent Orders</h2>
+  <table class="admin-table">
+    <thead>
+      <tr><th>Order ID</th><th>User ID</th><th>Total</th><th>Status</th><th>Date</th></tr>
+    </thead>
+    <tbody>
+      {% for order in recent_orders %}
+      <tr>
+        <td><code>#{{ order.OrderID[:8].upper() }}</code></td>
+        <td><small>{{ order.UserID[:12] }}...</small></td>
+        <td>₹{{ order.TotalAmount }}</td>
+        <td><span class="order-status status-{{ order.OrderStatus | lower }}">{{ order.OrderStatus }}</span></td>
+        <td>{{ order.OrderDate[:16] }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</section>
+
+{% endblock %}

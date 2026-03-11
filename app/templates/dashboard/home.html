@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% block title %}My Dashboard – HomeMade Pickles{% endblock %}
+
+{% block content %}
+<div class="dashboard-header">
+  <h1>👋 Welcome, {{ user.Name }}!</h1>
+  <p>{{ user.Email }} | Member since {{ user.CreatedAt[:10] if user.CreatedAt else 'N/A' }}</p>
+</div>
+
+<div class="dashboard-grid">
+
+  <!-- Recent Orders -->
+  <div class="dash-card">
+    <h2>📦 Recent Orders</h2>
+    {% if orders %}
+      {% for order in orders %}
+      <div class="mini-order">
+        <span>#{{ order.OrderID[:8].upper() }}</span>
+        <span>{{ order.OrderDate[:10] }}</span>
+        <span>₹{{ order.TotalAmount }}</span>
+        <span class="order-status status-{{ order.OrderStatus | lower }}">{{ order.OrderStatus }}</span>
+      </div>
+      {% endfor %}
+      <a href="{{ url_for('orders.history') }}" class="btn-secondary small-btn">View All Orders</a>
+    {% else %}
+      <p class="empty-msg">No orders yet. <a href="{{ url_for('products.catalog') }}">Shop now!</a></p>
+    {% endif %}
+  </div>
+
+  <!-- Subscriptions -->
+  <div class="dash-card">
+    <h2>🔄 My Subscriptions</h2>
+    {% if subscriptions %}
+      {% for sub in subscriptions %}
+      <div class="mini-sub">
+        <strong>{{ sub.product.Name if sub.product else sub.ProductID }}</strong>
+        <span class="sub-freq">{{ sub.Frequency }}</span>
+        <span class="sub-next">Next: {{ sub.NextDelivery[:10] }}</span>
+        <span class="sub-status status-{{ sub.Status | lower }}">{{ sub.Status }}</span>
+      </div>
+      {% endfor %}
+    {% else %}
+      <p class="empty-msg">No subscriptions. <a href="{{ url_for('subscriptions.new_subscription') }}">Subscribe now!</a></p>
+    {% endif %}
+    <a href="{{ url_for('subscriptions.list_subscriptions') }}" class="btn-secondary small-btn">Manage Subscriptions</a>
+  </div>
+
+  <!-- Recommendations -->
+  <div class="dash-card full-width-card">
+    <h2>✨ Recommended for You</h2>
+    {% if recommendations %}
+    <div class="rec-grid">
+      {% for product in recommendations %}
+      <div class="rec-item">
+        <img src="{{ product.ImageURL or url_for('static', filename='images/placeholder.jpg') }}"
+             alt="{{ product.Name }}" class="rec-img"/>
+        <p>{{ product.Name }}</p>
+        <span class="price">₹{{ product.Price }}</span>
+        <a href="{{ url_for('products.detail', product_id=product.ProductID) }}" class="btn-view small-btn">View</a>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+      <p class="empty-msg">Browse and order products to get personalized recommendations.</p>
+    {% endif %}
+  </div>
+
+</div>
+{% endblock %}

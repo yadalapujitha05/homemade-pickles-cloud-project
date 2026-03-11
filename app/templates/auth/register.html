@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Register – HomeMade Pickles{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+  <div class="auth-card">
+    <h2>📝 Create Account</h2>
+    <p class="auth-sub">Join us for the best homemade pickles and snacks!</p>
+
+    <form method="POST" action="{{ url_for('auth.register') }}">
+      <div class="form-group">
+        <label for="name">Full Name</label>
+        <input type="text" id="name" name="name" required placeholder="Your full name"/>
+      </div>
+      <div class="form-group">
+        <label for="email">Email Address</label>
+        <input type="email" id="email" name="email" required placeholder="you@example.com"/>
+      </div>
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" required placeholder="Create a strong password" minlength="6"/>
+      </div>
+      <div class="form-group">
+        <label for="address">Delivery Address</label>
+        <textarea id="address" name="address" rows="3" placeholder="Your delivery address (optional)"></textarea>
+      </div>
+      <button type="submit" class="btn-primary full-width">Create Account</button>
+    </form>
+
+    <p class="auth-link">Already have an account? <a href="{{ url_for('auth.login') }}">Login here</a></p>
+  </div>
+</div>
+{% endblock %}

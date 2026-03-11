@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+{% block title %}HomeMade Pickles & Snacks – Taste the Best{% endblock %}
+
+{% block content %}
+
+<!-- ===== HERO SECTION ===== -->
+<section class="hero">
+  <div class="hero-content">
+    <h1>🥒 Taste the Best</h1>
+    <p>Handcrafted pickles and snacks made with traditional recipes, delivered fresh to your door.</p>
+    <div class="hero-buttons">
+      <a href="{{ url_for('products.by_category', category='Pickles') }}" class="btn-primary">Shop Pickles</a>
+      <a href="{{ url_for('products.by_category', category='Snacks') }}" class="btn-secondary">Shop Snacks</a>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FEATURED PICKLES ===== -->
+<section class="section">
+  <h2 class="section-title">🫙 Our Pickles</h2>
+  <div class="product-grid">
+    {% for product in pickles %}
+    <div class="product-card">
+      <img src="{{ product.ImageURL or url_for('static', filename='images/placeholder.jpg') }}" alt="{{ product.Name }}" class="product-img"/>
+      <div class="product-info">
+        <h3>{{ product.Name }}</h3>
+        <p class="product-desc">{{ product.Description[:80] }}...</p>
+        <div class="product-meta">
+          <span class="price">₹{{ product.Price }}</span>
+          {% if product.Stock | int > 0 %}
+            <span class="badge-instock">In Stock ({{ product.Stock }})</span>
+          {% else %}
+            <span class="badge-outofstock">Out of Stock</span>
+          {% endif %}
+        </div>
+        <a href="{{ url_for('products.detail', product_id=product.ProductID) }}" class="btn-view">View Details</a>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  <div class="text-center">
+    <a href="{{ url_for('products.by_category', category='Pickles') }}" class="btn-secondary">View All Pickles →</a>
+  </div>
+</section>
+
+<!-- ===== FEATURED SNACKS ===== -->
+<section class="section section-alt">
+  <h2 class="section-title">🍿 Our Snacks</h2>
+  <div class="product-grid">
+    {% for product in snacks %}
+    <div class="product-card">
+      <img src="{{ product.ImageURL or url_for('static', filename='images/placeholder.jpg') }}" alt="{{ product.Name }}" class="product-img"/>
+      <div class="product-info">
+        <h3>{{ product.Name }}</h3>
+        <p class="product-desc">{{ product.Description[:80] }}...</p>
+        <div class="product-meta">
+          <span class="price">₹{{ product.Price }}</span>
+          {% if product.Stock | int > 0 %}
+            <span class="badge-instock">In Stock</span>
+          {% else %}
+            <span class="badge-outofstock">Out of Stock</span>
+          {% endif %}
+        </div>
+        <a href="{{ url_for('products.detail', product_id=product.ProductID) }}" class="btn-view">View Details</a>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  <div class="text-center">
+    <a href="{{ url_for('products.by_category', category='Snacks') }}" class="btn-secondary">View All Snacks →</a>
+  </div>
+</section>
+
+<!-- ===== PERSONALIZED RECOMMENDATIONS (for logged-in users) ===== -->
+{% if recommendations %}
+<section class="section">
+  <h2 class="section-title">✨ Recommended for You</h2>
+  <p class="section-sub">Based on your orders and browsing history</p>
+  <div class="product-grid">
+    {% for product in recommendations %}
+    <div class="product-card recommended">
+      <span class="rec-badge">⭐ Recommended</span>
+      <img src="{{ product.ImageURL or url_for('static', filename='images/placeholder.jpg') }}" alt="{{ product.Name }}" class="product-img"/>
+      <div class="product-info">
+        <h3>{{ product.Name }}</h3>
+        <span class="price">₹{{ product.Price }}</span>
+        <a href="{{ url_for('products.detail', product_id=product.ProductID) }}" class="btn-view">View</a>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
+
+<!-- ===== WHY CHOOSE US ===== -->
+<section class="section section-alt">
+  <h2 class="section-title">Why Choose Us?</h2>
+  <div class="features-grid">
+    <div class="feature-card">
+      <span class="feature-icon">🌿</span>
+      <h3>100% Natural</h3>
+      <p>No preservatives. Only traditional ingredients.</p>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">🏠</span>
+      <h3>Home Made</h3>
+      <p>Prepared with love using family recipes passed down for generations.</p>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">🚚</span>
+      <h3>Fresh Delivery</h3>
+      <p>Subscribe for weekly or monthly deliveries right to your door.</p>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">☁️</span>
+      <h3>Real-Time Tracking</h3>
+      <p>AWS-powered inventory so you always know what's available.</p>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block title %}{{ product.Name }} – HomeMade Pickles{% endblock %}
+
+{% block content %}
+<div class="product-detail">
+  <div class="detail-image">
+    <img src="{{ product.ImageURL or url_for('static', filename='images/placeholder.jpg') }}"
+         alt="{{ product.Name }}"/>
+  </div>
+
+  <div class="detail-info">
+    <span class="category-tag">{{ product.Category }}</span>
+    <h1>{{ product.Name }}</h1>
+    <p class="detail-desc">{{ product.Description }}</p>
+
+    <div class="detail-price">
+      <span class="price-large">₹{{ product.Price }}</span>
+      {% if product.Stock | int > 0 %}
+        <span class="badge-instock">✓ In Stock – {{ product.Stock }} units available</span>
+      {% else %}
+        <span class="badge-outofstock">✗ Currently Out of Stock</span>
+      {% endif %}
+    </div>
+
+    {% if product.Stock | int > 0 %}
+      {% if session.user_id %}
+        <form method="POST" action="{{ url_for('cart.add_to_cart', product_id=product.ProductID) }}" class="add-to-cart-form">
+          <label for="quantity">Quantity:</label>
+          <input type="number" id="quantity" name="quantity" value="1" min="1" max="{{ product.Stock }}" class="qty-input"/>
+          <button type="submit" class="btn-primary">🛒 Add to Cart</button>
+        </form>
+
+        <div class="subscribe-prompt">
+          <p>Want this regularly? 
+            <a href="{{ url_for('subscriptions.new_subscription') }}?product={{ product.ProductID }}">Subscribe for delivery →</a>
+          </p>
+        </div>
+      {% else %}
+        <p class="login-prompt">
+          <a href="{{ url_for('auth.login') }}">Login</a> to add this product to your cart.
+        </p>
+      {% endif %}
+    {% endif %}
+
+    <div class="product-tags">
+      <span>Category: <strong>{{ product.Category }}</strong></span>
+      <span>Product ID: <code>{{ product.ProductID[:8] }}...</code></span>
+    </div>
+  </div>
+</div>
+
+<div class="text-center" style="margin-top: 2rem;">
+  <a href="{{ url_for('products.catalog') }}" class="btn-secondary">← Back to Catalog</a>
+</div>
+{% endblock %}

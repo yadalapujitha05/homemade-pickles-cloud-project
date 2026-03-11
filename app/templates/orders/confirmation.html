@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}Order Confirmed – HomeMade Pickles{% endblock %}
+
+{% block content %}
+<div class="confirmation-box">
+  <div class="confirm-icon">✅</div>
+  <h1>Order Placed Successfully!</h1>
+  <p class="order-id">Order ID: <strong>#{{ order.OrderID[:8].upper() }}</strong></p>
+  <p class="order-date">Placed on: {{ order.OrderDate[:10] }}</p>
+
+  <div class="order-items-summary">
+    <h3>Items Ordered</h3>
+    <table class="summary-table">
+      <thead>
+        <tr><th>Product</th><th>Qty</th><th>Price</th></tr>
+      </thead>
+      <tbody>
+        {% for item in order.Products %}
+        <tr>
+          <td>{{ item.Name }}</td>
+          <td>{{ item.Quantity }}</td>
+          <td>₹{{ item.Price }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <div class="confirm-total">
+      <strong>Total Paid: ₹{{ order.TotalAmount }}</strong>
+    </div>
+  </div>
+
+  <div class="confirm-actions">
+    <a href="{{ url_for('main.home') }}" class="btn-primary">Continue Shopping</a>
+    <a href="{{ url_for('orders.history') }}" class="btn-secondary">View Order History</a>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}My Subscriptions – HomeMade Pickles{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h1>🔄 My Subscriptions</h1>
+  <a href="{{ url_for('subscriptions.new_subscription') }}" class="btn-primary">+ New Subscription</a>
+</div>
+
+{% if subscriptions %}
+<div class="subs-grid">
+  {% for sub in subscriptions %}
+  <div class="sub-card {% if sub.Status == 'Cancelled' %}sub-cancelled{% endif %}">
+    {% if sub.product %}
+      <img src="{{ sub.product.ImageURL or url_for('static', filename='images/placeholder.jpg') }}"
+           alt="{{ sub.product.Name }}" class="sub-img"/>
+      <h3>{{ sub.product.Name }}</h3>
+      <p>₹{{ sub.product.Price }}</p>
+    {% else %}
+      <h3>Product: {{ sub.ProductID[:8] }}</h3>
+    {% endif %}
+
+    <div class="sub-details">
+      <p><strong>Frequency:</strong> {{ sub.Frequency | capitalize }}</p>
+      <p><strong>Next Delivery:</strong> {{ sub.NextDelivery[:10] }}</p>
+      <p><strong>Status:</strong>
+        <span class="sub-status status-{{ sub.Status | lower }}">{{ sub.Status }}</span>
+      </p>
+    </div>
+
+    {% if sub.Status == 'Active' %}
+    <form method="POST" action="{{ url_for('subscriptions.cancel', subscription_id=sub.SubscriptionID) }}">
+      <button type="submit" class="btn-danger-sm" onclick="return confirm('Cancel this subscription?')">
+        Cancel
+      </button>
+    </form>
+    {% endif %}
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+<div class="empty-state">
+  <p>You have no subscriptions yet.</p>
+  <a href="{{ url_for('subscriptions.new_subscription') }}" class="btn-primary">Subscribe Now</a>
+</div>
+{% endif %}
+{% endblock %}
